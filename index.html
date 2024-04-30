@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Stars</title>
+
+    <style>
+        body{
+            background-color: rgb(219, 219, 196);
+        }
+        #gameContainer{
+            margin: 0 auto;
+            justify-content: center;
+            width: 1400px;
+            height: 600px;
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            background-image: url('bg5.jpg');
+            background-size:auto;
+            background-repeat: no-repeat;
+        }
+        #star1{
+            width: 30px;
+            height: 30px;
+            animation: shootStar 3s linear infinite;
+            position: relative;
+            background-image: url('star.gif');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        #star2{
+            width: 30px;
+            height: 30px;
+            animation: shootStar 4s linear infinite;
+            position: relative;
+            background-image: url('star.gif');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        @keyframes shootStar {
+            0%{left: 0}
+            100%{left: 1400px}
+        }
+        #moon{
+            width: 50px;
+            height: 50px;
+            animation: shootMoon 10s linear infinite;
+            position: relative;
+            background-image: url('moon.gif');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        @keyframes shootMoon{
+            0%{left: 0}
+            100%{left: 1400px}
+        }
+        #catcher{
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 500px;  /*oyun konsolunun yüksekliği - catcher  yüksekliği */
+            left: 1300px;
+            background-image: url('astronaut.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        h2{
+            text-align: center;
+            font-family:"MV Boli";
+            font-size: 30px;
+        }
+        .startContainer {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: rgb(6, 7, 71);
+                padding: 20px;
+                border-radius: 1px solid black;
+                border-radius: 30px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                z-index: 9999;
+        }
+        .gameOverContainer {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: rgb(6, 7, 71);
+                padding: 20px;
+                border-radius: 1px solid black;
+                border-radius: 30px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                z-index: 9999;
+        }
+        .dialog-box {
+            border-radius: 0.5rem;
+            color: rgb(1, 2, 17);
+            background-color: rgb(73, 90, 218);
+            padding: 1rem;
+            min-height: 50vh;
+            min-width: 40vh;
+        }
+        .dialog-content {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #6e7ee2;
+            text-align: center;
+        }
+        #instructions{
+            font-family: "MV Boli";
+            font-size: 20px;
+        }
+        #startBtn{
+            font-family: "Parmenent Marker", cursive;
+            font-size: 18px;
+            width: 100px;
+            height: 70px;
+            border: 4px solid;
+            border-radius: 30px;
+            cursor: pointer;
+            background-color:rgb(190, 190, 196);
+        }
+        #gameOverContent{
+            font-family: "MV Boli";
+            font-size: 20px;
+        }
+        #scoreText{
+            font-family: "Parmenent Marker", cursive;
+            font-size: 30px;
+        }
+        #resetBtn{
+            font-family: "Parmenent Marker", cursive;
+            font-size: 18px;
+            width: 110px;
+            height: 70px;
+            border: 4px solid;
+            border-radius: 30px;
+            cursor: pointer;
+            background-color:rgb(190, 190, 196);
+        }
+    </style>
+</head>
+<body>
+    <div class="startContainer" id="dialog"> <!--başlangıç penceresi, yönergeleri içerir--> 
+        <div class="dialog-box">
+            <h2>Shooting Stars!</h2>
+            <div class="dialog-content animate__animated animate__faster">
+                <div id="instructions">
+                    Merhaba! <br>
+                    Bu oyunda yıldızları yakalamaya çalışacaksınız <br>
+                    Yakaladığınız her bir yıldız için skorunuz artar <br>
+                    Ay'ı yakalarsanız oyun biter! <br>
+                    Aşağı ve Yukarı yön tuşları ile <br>
+                     astronotu kontrol edebilirsiniz
+                </div>
+                <br>
+                <button onclick="closeDialog()" id="startBtn">START</button> <!--"START" butonuna basılınca başlangıç penceresi kapansın-->
+            </div>
+        </div>
+    </div>
+    <div id="gameContainer">  <!--oyundaki nesneleri içerir; Yıldızlar, Ay ve Yakalayıcı(Astronot)-->
+        <div id="star1"></div>
+        <div id="star2"></div>
+        <div id="moon"></div>
+        <div id="catcher"></div>
+    </div>
+    <br>
+    <div class="gameOverContainer" id="gameOverDialog"> <!--oyun bitiş penceresi, "RESTART" düğmesini içerir-->
+        <div class="dialog-box">
+            <h2>GAME OVER!</h2>
+            <div class="dialog-content animate__animated animate__faster">
+                <div id="gameOverContent">
+                    ENTER tuşuna veya <br> 
+                    RESTART düğmesine basarak devam edebilirsiniz. <br>
+                    SKORUNUZ:
+                    <div id="scoreText">0</div>
+                    <br>
+                    <button onclick="resetGame()" id="resetBtn">RESTART</button> <!--oyuna yeniden başlanması için resetGame fonksiyonunu çağırır-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //HTML ögelerini alıyoruz
+        const gameBoard = document.querySelectorAll("#gameContainer");
+        const gameHeight = gameBoard.height;
+        const gameWidth = gameBoard.width;
+        const scoreText = document.querySelector("#scoreText");
+        const star1 = document.getElementById("star1");
+        const star2 = document.getElementById("star2");
+        const moon = document.getElementById("moon");
+        const catcher = document.getElementById("catcher");
+        let catcherTop;
+        const birim = 25;
+        let score =0;
+
+        //oyun giriş penceresini kapatmak ve oyunu başlatmak için
+        function closeDialog(){
+            startGame();
+            document.getElementById("dialog").style.display="none";
+        }
+
+        //oyunu başlatan fonksiyon
+        function startGame(){
+
+            //yakalayıcı(astronot) yı hareket ettirmek için fonksiyonlar, yakalayıcı(catcher) ın css özelliklerine erişir
+            function moveUp(){
+                catcherTop = parseInt(window.getComputedStyle(catcher).getPropertyValue("top")); 
+                catcherTop -= birim;
+                if(catcherTop >= 0){
+                    catcher.style.top = catcherTop +"px";
+                }
+            }
+            function moveDown(){
+                catcherTop = parseInt(window.getComputedStyle(catcher).getPropertyValue("top"));
+                catcherTop += birim;
+                if(catcherTop < 500){
+                    catcher.style.top = catcherTop +"px";
+                }
+            }
+            document.addEventListener("keydown",function(event){
+                if(event.key === "ArrowUp"){  //yukarı ok tuşuna basılınca catcher(astronot) yukarı hareket etsin
+                    moveUp();
+                }
+                if(event.key === "ArrowDown"){ //aşağı ok tuşuna basılınca catcher(astronot) yukarı hareket etsin
+                    moveDown();
+                }
+            })
+
+            //ay ve yıldızları bir şekilde üretiyoruz
+            setInterval(createStars,1000);  
+            setInterval(createMoon,5000);
+         }
+
+        function createStars(){
+        randomNumber1 =  Math.floor(Math.random()*2)*100; //oyun konsolu uzunlugunun üçte birlik kısmında rastgele yıldızlar oluşssun
+        star1.style.top = randomNumber1 + "px";
+        randomNumber2 =  Math.floor(Math.random()*2)*100; 
+        star2.style.top = randomNumber2 + "px";
+        }
+        function createMoon(){
+            randomNumber =  Math.floor(Math.random()*2)*100; //oyun konsolu uzunlugunun üçte birlik kısmında rastgele ay oluşssun
+            moon.style.top = randomNumber + "px";
+        }
+
+        //iki element arasında çarpışmayı kontrol eden fonksiyon
+        function isCollide(element1, element2) {
+            const rect1 = element1.getBoundingClientRect();
+            const rect2 = element2.getBoundingClientRect();
+            return !(
+                rect1.right < rect2.left ||
+                rect1.left > rect2.right ||
+                rect1.bottom < rect2.top ||
+                rect1.top > rect2.bottom
+            );
+        }
+
+        //skoru güncelleyen ve çarpışmayı kontrol eden fonksiyon
+        function update() {
+            if (isCollide(catcher, star1) || isCollide(catcher, star2)) {  
+                score++; //catcher(astronot) yıldızlardan biriyle çarpışırsa(yakalarsa) skor artsın;
+            }
+            if (isCollide(catcher, moon)) { //catcher(astronot) ay çarpışırsa(yakalarsa) oyunu bitsin;
+                gameOver(score);
+
+                //animasyonlar dursun
+                star1.style.animation='none';
+                star2.style.animation='none';
+                moon.style.animation='none';
+            }
+        }
+        //update() fonksiyonu sürekli çağırılıyor
+        setInterval(update, 100);
+            
+        function gameOver(){
+            scoreText.textContent = score;  
+            document.getElementById("gameOverDialog").style.display = "block"; //oyun bitiş penceresi açılır
+            document.addEventListener("keydown",function(event){  //enter tuşunabasılınca oyuna yeniden başlanır
+                if(event.key === "Enter"){
+                    resetGame();
+                }
+            })
+        }
+        function resetGame() {
+            location.reload(); //website yeniden yüklenir
+        }
+    </script>
+</body>
+</html>
